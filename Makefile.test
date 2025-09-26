@@ -1,0 +1,42 @@
+# 测试编译Makefile
+# 用于验证代码完整性
+
+CC = arm-none-eabi-gcc
+CFLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS += -Wall -Wextra -std=c99
+CFLAGS += -I./include
+CFLAGS += -I./include/drivers
+CFLAGS += -I./include/hal
+CFLAGS += -I./include/middleware
+CFLAGS += -I./include/app
+CFLAGS += -DGCC_ARMCM4 -DGD32F4xx
+
+# 只测试编译，不链接
+CFLAGS += -c
+
+# 应用层源文件
+APP_SOURCES = src/app/app_main.c src/app/control_task.c src/app/sensor_task.c
+
+# 中间件源文件
+MW_SOURCES = src/middleware/pid.c src/middleware/filter.c src/middleware/middleware_common.c
+
+# HAL层源文件
+HAL_SOURCES = src/hal/hal_common.c src/hal/gpio_hal.c src/hal/adc_hal.c src/hal/pwm_hal.c src/hal/i2c_hal.c src/hal/timer_hal.c src/hal/hal_manager.c
+
+# 所有源文件
+SOURCES = $(APP_SOURCES) $(MW_SOURCES) $(HAL_SOURCES)
+
+# 目标文件
+OBJECTS = $(SOURCES:.c=.o)
+
+.PHONY: test-compile clean
+
+test-compile: $(OBJECTS)
+	@echo "编译测试完成"
+
+%.o: %.c
+	@echo "编译 $<"
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm -f $(OBJECTS)

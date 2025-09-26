@@ -1,0 +1,117 @@
+# 8周v4 供墨系统控制板卡 .gitignore
+# GD32F427 Ink Supply System v4.0
+
+# 构建输出目录
+build/
+Build/
+BUILD/
+
+# 编译输出文件
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+*.map
+*.dis
+*.su
+*.d
+*.lst
+
+# 链接器文件
+*.out
+
+# 调试文件
+*.dap
+*.gch
+*.pch
+*.gdb_history
+.gdb_history
+gdb.txt
+
+# IDE文件
+# Eclipse CDT
+.cproject
+.project
+.settings/
+.metadata/
+
+# Code::Blocks
+*.cbp
+*.layout
+*.depend
+
+# IAR EWARM
+*.eww
+*.ewp
+*.ewd
+Debug/
+Release/
+settings/
+
+# Keil MDK-ARM
+*.uvprojx
+*.uvoptx
+*.uvguix
+*.uvgui
+DebugConfig/
+RTE/
+Listings/
+Objects/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# CLion
+.idea/
+cmake-build-*/
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# 备份文件
+*.bak
+*.backup
+*.orig
+
+# 日志文件
+*.log
+*.trace
+
+# OpenOCD和JLink调试文件
+*.jlink
+openocd.log
+
+# 文档生成
+docs/_build/
+
+# Python缓存 (如果使用Python工具)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 本地配置文件
+local_config.h
+user_config.h
+
+# CMake生成文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# 8周v4特定忽略项目
+# 中间件生成文件
+middleware_temp/
+
+# HAL层测试文件
+hal_test/
+
+# 驱动层测试输出
+driver_test_output/
