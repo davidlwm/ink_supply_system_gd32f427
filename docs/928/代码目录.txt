@@ -1,0 +1,46 @@
+ink_supply_gd32f427/
+├── 📁 src/                                # 源代码目录 (极简)
+│   ├── 📄 main.c                          # 主程序入口
+│   │
+│   ├── 📁 app/                            # 应用层 (功能合并)
+│   │   ├── 📄 sensors.c/h                 # 3种传感器集成 (FRD8061+HP10MY+FTT518)
+│   │   ├── 📄 actuators.c/h               # 3种执行器集成 (MRA23D3+MPB025BBB+阀门)
+│   │   ├── 📄 control.c/h                 # PID控制算法 (温度+压力+液位)
+│   │   ├── 📄 communication.c/h           # 双协议通信 (EtherCAT+TCP/IP)
+│   │   ├── 📄 display.c/h                 # 显示系统 (LCD+5路LED)
+│   │   ├── 📄 safety.c/h                  # 安全保护 (故障检测+紧急停机)
+│   │   └── 📄 config.c/h                  # 配置管理 (Flash存储+参数)
+│   │
+│   ├── 📁 middleware/                     # 中间件层 (最小化)
+│   │   ├── 📄 filter.c/h                  # 数字滤波 (滑动平均+卡尔曼)
+│   │   ├── 📄 pid.c/h                     # PID算法 (简化版)
+│   │   └── 📄 tasks.c/h                   # FreeRTOS任务管理
+│   │
+│   ├── 📁 hal/                            # 硬件抽象层 (基于GD32 HAL)
+│   │   ├── 📄 adc_hal.c/h                 # ADC处理 (传感器采集)
+│   │   ├── 📄 pwm_hal.c/h                 # PWM处理 (执行器控制)
+│   │   ├── 📄 gpio_hal.c/h                # GPIO处理 (数字IO)
+│   │   ├── 📄 uart_hal.c/h                # UART处理 (调试+通信)
+│   │   ├── 📄 spi_hal.c/h                 # SPI处理 (LCD显示)
+│   │   ├── 📄 eth_hal.c/h                 # 以太网处理 (网络通信)
+│   │   └── 📄 flash_hal.c/h               # Flash处理 (配置存储)
+│   │
+│   └── 📁 drivers/                        # 设备驱动层 (现成库)
+│       ├── 📄 lcd_driver.c/h              # CH12832B LCD驱动
+│       └── 📄 eth_driver.c/h              # 以太网PHY驱动
+│
+├── 📁 lib/                                # 第三方库 (现成库直接使用)
+│   ├── 📁 GD32F4xx_HAL/                   # GD32官方HAL库
+│   ├── 📁 FreeRTOS/                       # FreeRTOS v10.4.6
+│   ├── 📁 lwip/                           # lwIP v2.1.3
+│   └── 📁 ethercat/                       # EtherCAT开源库
+│
+├── 📁 config/                             # 配置文件
+│   ├── 📄 FreeRTOSConfig.h                # FreeRTOS配置
+│   ├── 📄 lwipopts.h                      # lwIP配置
+│   ├── 📄 gd32f4xx_hal_conf.h            # HAL库配置
+│   └── 📄 system_config.h                 # 系统参数配置
+│
+├── 📄 Makefile                            # 构建脚本
+├── 📄 README.md                           # 项目说明
+└── 📄 .gitignore                          # Git配置

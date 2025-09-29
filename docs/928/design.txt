@@ -1,0 +1,133 @@
+墨路控制系统架构设计文档
+技术选型 
+     FreeRTOS + lwIP + EtherCAT开源库 + GD32 HAL库+ GD32F427
+1.架构层次
+1.系统采用四层分层架构设计
+     应用层
+                   安全任务
+                   控制任务
+                   传感器任务
+                   执行器任务
+                   TCP任务
+                   EtherCAT通信任务
+                   LED任务
+                   HMI任务
+             配置任务
+     中间件层  
+              	PID控制器
+                    数字滤波器
+                    任务管理器
+              通用工具
+     HAL层 
+              	GPIO HAL
+                     ADC HAL
+                     DAC HAL
+                     PWM HAL
+                     I2C HAL
+                     Timer HAL
+               UART HAL
+                SPI HAL
+      驱动层
+
+2.应用层架构
+任务优先级分配
+
+#define TASK_PRIORITY_EMERGENCY        // 紧急处理任务
+#define TASK_PRIORITY_ETHERCAT         // EtherCAT通信  - EtherCAT通信             
+#define TASK_PRIORITY_SAFETY              // 安全监控任务 - 安全相关      
+#define TASK_PRIORITY_CONTROL          // 实时控制任务 - 实时控制      
+#define TASK_PRIORITY_SENSOR           // 传感器处理 - 数据处理       
+#define TASK_PRIORITY_ACTUATOR         // 执行器控制 - 设备控制       
+#define TASK_PRIORITY_TCP                   // TCP通信    - TCP通信         
+#define TASK_PRIORITY_LED                  // LED控制 -  LED控制    
+#define TASK_PRIORITY_HMI                  // 显示任务 - 人机界面     
+#define TASK_PRIORITY_CONFIG           // 配置管理 - 后台任务  
+
+
+（重新设计，对应上面）
+任务名称	优先级	周期	功能描述
+Safety Task	15	10ms	安全监控
+Control Task	12	20ms	控制逻辑
+Sensor Task	8	50ms	数据采集
+Actuator Task	8	10ms	执行器管理
+HMI Task	5	100ms	人机交互
+Comm Task	5	50ms	通信处理
+Config Task	2	1000ms	配置管理
+			
+			
+			
+
+任务具体设计
+
+安全监控任务设计 (重新设计)
+
+ 检查项目	检查频率
+传感器健康检查	10ms
+执行器状态检查	10ms
+温度过限检查 	10ms
+压力过限检查 	10ms
+液位异常检查 	10ms
+通信超时检查 	50ms
+	
+	
+
+传感器任务设计
+      1）温度采集        温度传感器FTT518 Pt100 A级  2pin 2.0 *3组    ADC（12bit?/15bit）
+      2）压力采集        压力传感器HP10MY -(+50kPa)-B1-G  3pin 2.0 *4组  ADC （12/15bit）
+      3）液位采集        液位传感器FRD-8061   2pin 2.0 *3组   ADC（12bit?/15bit）
+                                    模拟量输入  1路     
+      4）流量采集（待定）    IIC    流量检测
+
+控制器任务设计
+      1）电磁阀          2路  24v  ZDF （预留1路）
+      2）加热控制         继电器MRA-23D3   3路   （预留1路）
+      3）调速泵           MPB025BBB 2路  pwm输出/模拟量  
+      4）直流泵          隔膜泵 2路   IO输出  24V  on/off
+
+LED控制设计  
+      LED指示 1
+           液位IO输入：    1 低 1 高位对应，红灯和绿灯；共 3 组
+           液位ADC输入： 对应，蓝灯；共 1 个
+           温度ADC输入： 对应，检测到为绿灯，未检测到红灯；共 3 组
+           压力ADC输入： 对应，检测到为绿灯，未检测到红灯；共 4 组
+           IIC流量检测：     有数据绿灯，无数据显示（待定）
+
+      LED指示 2
+            9 路输出 LED 指示：黄灯，有输出亮；无输出不亮
+
+       其他指示
+             指示供电及、数据连接：2 路 LED，1 红 1 绿
+
+ 显示任务 
+          CH12832B-12  128*32 
+
+ 配置任务 
+          （待设计）
+
+
+ EtherCAT通信（详细设计）
+           F427  <----->  SPI协议      GDSCN832R2U6 
+
+ TCP通信  （EtherCAT通信和tcp 二选一）
+       上位机自定义TCP协议基本格式
+typedef struct {
+    uint16_t sync_word;       // 同步字 0xAA55
+    uint16_t length;              // 帧长度(包含帧头)
+    uint8_t  cmd;                  // 命令字
+    uint8_t  index;                  // id
+    uint16_t checksum;        // 校验和
+} __attribute__((packed)) tcp_frame_header_t;
+
+// 完整TCP协议帧 
+typedef struct {
+    tcp_frame_header_t header; // 帧头(8字节) 
+    // 柔性数组成员：数据域 (可变长度)
+    uint8_t data[];               
+} __attribute__((packed)) tcp_protocol_frame_t;
+返回报文格式相同   data[0] 放错误码
+
+
+
+
+
+

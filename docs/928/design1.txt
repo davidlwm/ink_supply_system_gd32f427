@@ -1,0 +1,477 @@
+墨路控制系统架构设计文档
+技术选型 
+     FreeRTOS + lwIP + EtherCAT开源库 + GD32 HAL库+ GD32F427
+一、架构层次
+1.系统采用四层分层架构设计
+     应用层
+                   安全任务
+                   控制任务
+                   传感器任务
+                   执行器任务
+                   TCP任务
+                   EtherCAT任务
+                   LED任务
+                   HMI任务
+             配置任务
+     中间件层  
+              	PID控制器
+                    数字滤波器
+                    任务管理器
+              通用工具
+     HAL层 
+              	GPIO HAL
+                     ADC HAL
+                     DAC HAL
+                     PWM HAL
+                     I2C HAL
+                     Timer HAL
+               UART HAL
+                SPI HAL
+      驱动层
+
+二、应用层架构
+1、任务优先级分配
+
+#define TASK_PRIORITY_EMERGENCY        // 紧急处理任务
+#define TASK_PRIORITY_ETHERCAT         // EtherCAT通信  - EtherCAT通信             
+#define TASK_PRIORITY_SAFETY              // 安全监控任务 - 安全相关      
+#define TASK_PRIORITY_CONTROL          // 实时控制任务 - 实时控制      
+#define TASK_PRIORITY_SENSOR           // 传感器处理 - 数据处理       
+#define TASK_PRIORITY_ACTUATOR         // 执行器控制 - 设备控制       
+#define TASK_PRIORITY_TCP                   // TCP通信    - TCP通信         
+#define TASK_PRIORITY_LED                  // LED控制 -  LED控制    
+#define TASK_PRIORITY_HMI                  // 显示任务 - 人机界面     
+#define TASK_PRIORITY_CONFIG           // 配置管理 - 后台任务  
+
+任务名称	优先级	周期	栈大小	功能描述
+Emergency Task	20	事件触发	1024	紧急安全处理
+EtherCAT Task	18	1ms	2048	EtherCAT通信处理
+Safety Task	15	10ms	1024	安全监控
+Control Task	12	20ms	1536	控制逻辑
+Sensor Task	8	50ms	1024	数据采集
+Actuator Task	8	10ms	1024	执行器管理
+TCP Task	5	50ms	2048	TCP通信处理
+LED Task	5	100ms	512	LED状态指示
+HMI Task	5	100ms	1024	人机交互
+Config Task	2	1000ms	1024	配置管理
+
+2、任务具体设计
+
+1）安全监控任务设计 
+任务结构
+typedef struct {
+    uint32_t check_interval;      // 检查间隔
+    uint32_t timeout_threshold;   // 超时阈值
+    bool (*check_function)(void); // 检查函数
+    void (*alarm_handler)(void);  // 告警处理
+} safety_check_item_t;
+
+typedef struct {
+    // 传感器状态
+    bool temp_sensor_ok[3];       // 3路温度传感器状态
+    bool pressure_sensor_ok[4];   // 4路压力传感器状态
+    bool level_sensor_ok[3];      // 3路液位传感器状态
+    bool flow_sensor_ok;          // 流量传感器状态
+
+    // 执行器状态
+    bool valve_status[2];         // 电磁阀状态
+    bool heater_status[3];        // 加热器状态
+    bool pump_status[4];          // 泵状态
+
+    // 通信状态
+    uint32_t ethercat_last_comm;  // EtherCAT最后通信时间
+    uint32_t tcp_last_comm;       // TCP最后通信时间
+
+    // 安全参数
+    float temp_max[3];            // 温度上限
+    float temp_min[3];            // 温度下限
+    float pressure_max[4];        // 压力上限
+    float pressure_min[4];        // 压力下限
+    float level_max[3];           // 液位上限
+    float level_min[3];           // 液位下限
+} safety_context_t;
+
+安全检查项目
+检查项目	检查频率	阈值设置	处理动作
+传感器健康检查	10ms	连续3次读取失败	切换到安全模式
+执行器状态检查	10ms	反馈信号异常	停止相关控制
+温度过限检查	10ms	±5°C超出设定值	关闭加热/启动冷却
+压力过限检查	10ms	±10kPa超出设定值	关闭相关阀门
+液位异常检查	10ms	超出安全范围	停止相关泵
+通信超时检查	50ms	500ms无通信	进入离线模式
+
+安全状态机
+typedef enum {
+    SAFETY_STATE_NORMAL,      // 正常运行
+    SAFETY_STATE_WARNING,     // 警告状态
+    SAFETY_STATE_ALARM,       // 告警状态
+    SAFETY_STATE_EMERGENCY,   // 紧急停机
+    SAFETY_STATE_MAINTENANCE  // 维护模式
+} safety_state_t;
+
+2）传感器任务设计
+      1）温度采集        温度传感器FTT518 Pt100 A级  2pin 2.0 *3组    ADC（12bit?/15bit）
+      2）压力采集        压力传感器HP10MY -(+50kPa)-B1-G  3pin 2.0 *4组  ADC （12/15bit）
+      3）液位采集        液位传感器FRD-8061   2pin 2.0 *3组   ADC（12bit?/15bit）
+                                    模拟量输入  1路     
+      4）流量采集（待定）    IIC    流量检测
+// 传感器类型定义
+typedef enum {
+    SENSOR_TEMP_1,    // 温度传感器1 (FTT518 Pt100)
+    SENSOR_TEMP_2,    // 温度传感器2
+    SENSOR_TEMP_3,    // 温度传感器3
+    SENSOR_PRESSURE_1, // 压力传感器1 (HP10MY)
+    SENSOR_PRESSURE_2, // 压力传感器2
+    SENSOR_PRESSURE_3, // 压力传感器3
+    SENSOR_PRESSURE_4, // 压力传感器4
+    SENSOR_LEVEL_1,   // 液位传感器1 (FRD-8061)
+    SENSOR_LEVEL_2,   // 液位传感器2
+    SENSOR_LEVEL_3,   // 液位传感器3
+    SENSOR_LEVEL_ANALOG, // 模拟量液位
+    SENSOR_FLOW,      // 流量传感器(I2C)
+    SENSOR_COUNT
+} sensor_type_t;
+
+// 液位传感器配置
+typedef struct {
+    char model[16];           // "FRD-8061"
+    float range_min;          // 0mm (最小液位)
+    float range_max;          // 2000mm (最大液位)
+    float accuracy;           // ±1.0% (精度等级)
+    float output_min;         // 4.0mA (输出下限)
+    float output_max;         // 20.0mA (输出上限)
+    uint16_t response_time;   // <1000ms (响应时间)
+    uint8_t supply_voltage;   // 24V (供电电压)
+} liquid_level_sensor_spec_t;
+
+// 压力传感器配置
+typedef struct {
+    char model[16];           // "HP10MY"
+    float range_min;          // -100kPa (负压下限)
+    float range_max;          // 100000kPa (正压上限, 100MPa)
+    float accuracy;           // ±1.5% (精度等级)
+    float output_min;         // 4.0mA (输出下限)
+    float output_max;         // 20.0mA (输出上限)
+    uint16_t response_time;   // <100ms (响应时间)
+    uint8_t supply_voltage;   // 24V (供电电压)
+} pressure_sensor_spec_t;
+
+// PT100温度传感器配置 
+typedef struct {
+    char model[16];           // "FTT518"
+    char sensor_type[16];     // "PT100 A级"
+    float range_min;          // 50°C (测量下限)
+    float range_max;          // 600°C (测量上限)
+    float accuracy_class;     // 0.15% (A级精度)
+    float r0_nominal;         // 100.0Ω (0°C标称电阻)
+    float alpha;              // 0.003851 (温度系数)
+    uint8_t wire_connection;  // 3 (三线制连接)
+} pt100_sensor_spec_t;
+
+3）控制器任务设计
+typedef struct {
+    // PID参数
+    float kp, ki, kd;             // PID系数
+    float setpoint;               // 设定值
+    float output_min, output_max; // 输出限幅
+    float integral_min, integral_max; // 积分限幅
+
+    // 状态变量
+    float previous_error;
+    float integral;
+    float derivative;
+    float previous_input;
+
+    // 控制模式
+    bool auto_mode;
+    bool reverse_action;
+} pid_controller_t;
+
+// 控制回路定义
+typedef enum {
+    CTRL_TEMP_1,      // 温度控制回路1
+    CTRL_TEMP_2,      // 温度控制回路2
+    CTRL_TEMP_3,      // 温度控制回路3
+    CTRL_PRESSURE_1,  // 压力控制回路1
+    CTRL_PRESSURE_2,  // 压力控制回路2
+    CTRL_LEVEL_1,     // 液位控制回路1
+    CTRL_LEVEL_2,     // 液位控制回路2
+    CTRL_FLOW,        // 流量控制回路
+    CTRL_COUNT
+} control_loop_t;
+
+4）执行器任务设计
+      1）电磁阀          2路  24v  ZDF （预留1路）
+      2）加热控制         继电器MRA-23D3   3路   （预留1路）
+      3）调速泵           MPB025BBB 2路  pwm输出/模拟量  
+      4）直流泵          隔膜泵 2路   IO输出  24V  on/off
+     // 执行器类型
+typedef enum {
+    ACTUATOR_VALVE_1,     // 电磁阀1 (24V)
+    ACTUATOR_VALVE_2,     // 电磁阀2 (24V)
+    ACTUATOR_HEATER_1,    // 加热器1 (继电器)
+    ACTUATOR_HEATER_2,    // 加热器2 (继电器)
+    ACTUATOR_HEATER_3,    // 加热器3 (继电器)
+    ACTUATOR_PUMP_SPEED_1, // 调速泵1 (PWM)
+    ACTUATOR_PUMP_SPEED_2, // 调速泵2 (PWM)
+    ACTUATOR_PUMP_DC_1,   // 直流泵1 (IO)
+    ACTUATOR_PUMP_DC_2,   // 直流泵2 (IO)
+    ACTUATOR_COUNT
+} actuator_type_t;
+
+// 加热器控制配置 
+typedef struct {
+    char model[16];           // "MRA-23D3"
+    uint16_t voltage_rating;  // 220V (额定电压)
+    uint16_t power_rating;    // 150W/100W (额定功率)
+    uint16_t current_rating;  // 0.7A/0.45A (额定电流)
+    float switching_voltage;  // 3.3V (控制电压)
+    uint16_t response_time;   // <10ms (响应时间)
+    char isolation_type[16];  // "光电隔离" (隔离方式)
+} heater_control_spec_t;
+
+// 调速泵控制配置 
+typedef struct {
+    char model[16];           // "MPB025BBB"
+    uint16_t voltage_rating;  // 24V (额定电压)
+    uint16_t power_rating;    // 25W (额定功率)
+    uint16_t speed_min;       // 200 RPM (最低转速)
+    uint16_t speed_max;       // 5000 RPM (最高转速)
+    float control_voltage_min; // 0.2V (控制电压下限)
+    float control_voltage_max; // 5.0V (控制电压上限)
+    uint16_t response_time;   // <500ms (响应时间)
+} variable_pump_spec_t;
+
+5）LED控制设计  
+      LED指示 1
+           液位IO输入：    1 低 1 高位对应，红灯和绿灯；共 3 组
+           液位ADC输入： 对应，蓝灯；共 1 个
+           温度ADC输入： 对应，检测到为绿灯，未检测到红灯；共 3 组
+           压力ADC输入： 对应，检测到为绿灯，未检测到红灯；共 4 组
+           IIC流量检测：     有数据绿灯，无数据显示（待定）
+
+      LED指示 2
+            9 路输出 LED 指示：黄灯，有输出亮；无输出不亮
+
+       其他指示
+             指示供电及、数据连接：2 路 LED，1 红 1 绿
+typedef enum {
+    LED_LEVEL_LOW_1,      // 液位低位指示1 (红)
+    LED_LEVEL_HIGH_1,     // 液位高位指示1 (绿)
+    LED_LEVEL_LOW_2,      // 液位低位指示2 (红)
+    LED_LEVEL_HIGH_2,     // 液位高位指示2 (绿)
+    LED_LEVEL_LOW_3,      // 液位低位指示3 (红)
+    LED_LEVEL_HIGH_3,     // 液位高位指示3 (绿)
+    LED_LEVEL_ANALOG,     // 模拟液位指示 (蓝)
+    LED_TEMP_1,           // 温度传感器1 (绿/红)
+    LED_TEMP_2,           // 温度传感器2 (绿/红)
+    LED_TEMP_3,           // 温度传感器3 (绿/红)
+    LED_PRESSURE_1,       // 压力传感器1 (绿/红)
+    LED_PRESSURE_2,       // 压力传感器2 (绿/红)
+    LED_PRESSURE_3,       // 压力传感器3 (绿/红)
+    LED_PRESSURE_4,       // 压力传感器4 (绿/红)
+    LED_FLOW,             // 流量指示 (绿/红)
+    LED_OUTPUT_1,         // 输出指示1 (黄)
+    LED_OUTPUT_2,         // 输出指示2 (黄)
+    LED_OUTPUT_3,         // 输出指示3 (黄)
+    LED_OUTPUT_4,         // 输出指示4 (黄)
+    LED_OUTPUT_5,         // 输出指示5 (黄)
+    LED_OUTPUT_6,         // 输出指示6 (黄)
+    LED_OUTPUT_7,         // 输出指示7 (黄)
+    LED_OUTPUT_8,         // 输出指示8 (黄)
+    LED_OUTPUT_9,         // 输出指示9 (黄)
+    LED_POWER,            // 电源指示 (绿)
+    LED_COMM,             // 通信指示 (红)
+    LED_COUNT
+} led_type_t;
+
+typedef struct {
+    uint8_t gpio_port;
+    uint8_t gpio_pin;
+    bool state;
+    bool blink_enable;
+    uint16_t blink_period;
+    uint16_t blink_duty;
+    uint32_t last_toggle;
+} led_config_t;
+
+ 6）显示任务 
+          CH12832B-12  128*32 
+typedef struct {
+    uint8_t width;                // 128像素
+    uint8_t height;               // 32像素
+    uint8_t framebuffer[512];     // 显存 (128*32/8)
+    bool dirty;                   // 刷新标志
+} lcd_context_t;
+
+ 7）配置任务 
+          （待设计）
+
+
+ 8）EtherCAT通信（详细设计）
+           F427  <----->  SPI协议      GDSCN832R2U6 
+// EtherCAT配置
+typedef struct {
+    char controller_model[16]; // "GDSCN832R2U6"
+    uint8_t port_count;        // 2 (双端口)
+    uint32_t baudrate;         // 100Mbps
+    bool hardware_realtime;    // true (硬件实时)
+    bool distributed_clock;    // true (分布式时钟)
+    uint16_t sync_period;      // 1ms (同步周期)
+    uint16_t process_data_size; // 64bytes (过程数据大小)
+} ethercat_config_t;
+
+// EtherCAT过程数据定义 
+typedef struct {
+    // 数字输入 (8bytes) 
+    union {
+        uint8_t digital_input_bytes[8];
+        struct {
+            bool ink_tank_level_1 : 1;      // I0.0 - 墨桶液位开关1
+            bool ink_tank_level_2 : 1;      // I0.1 - 墨桶液位开关2
+            bool waste_tank_level : 1;      // I0.2 - 废桶液位开关
+            bool cartridge_level_1 : 1;     // I0.3 - 墨盒液位开关1
+            bool cartridge_level_2 : 1;     // I0.4 - 墨盒液位开关2
+            bool reserved_input_5 : 1;      // I0.5 - 预留
+            bool reserved_input_6 : 1;      // I0.6 - 预留
+            bool reserved_input_7 : 1;      // I0.7 - 预留
+        } digital_inputs;
+    };
+
+    // 模拟输入 (12bytes) 
+    uint16_t analog_inputs[6];    // IW1-IW6: 压力、液位模拟量
+
+    // 温度输入 (4bytes) 
+    uint16_t temperature_inputs[2]; // T10-T11: PT100温度
+
+    // 数字输出 (8bytes) 
+    union {
+        uint8_t digital_output_bytes[8];
+        struct {
+            bool ink_pump_start : 1;        // Q0.0 - 墨桶泵启动
+            bool return_pump_start : 1;     // Q0.1 - 回墨泵启动
+            bool recycle_valve_open : 1;    // Q0.2 - 回收电磁阀
+            bool cartridge_heater : 1;      // Q0.3 - 墨盒加热
+            bool line_heater : 1;           // Q0.4 - 明尼常加热
+            bool water_supply_valve : 1;    // Q0.5 - 供水回收电磁阀
+            bool waste_ink_valve : 1;       // Q0.6 - 废桶供墨电磁阀
+            bool tank_ink_valve : 1;        // Q0.7 - 墨桶供墨电磁阀
+        } digital_outputs;
+    };
+
+    // 模拟输出 (8bytes)
+    uint16_t analog_outputs[4];   // QW1-QW4: 泵速调节输出
+
+    // 系统状态 (4bytes)
+    uint16_t system_status;       // 系统状态字
+    uint16_t fault_code;          // 故障代码
+
+} ethercat_process_data_t;
+
+ 9）TCP通信  （EtherCAT通信和tcp 二选一）
+       上位机自定义TCP协议基本格式
+typedef struct {
+    uint16_t sync_word;       // 同步字 0xAA55
+    uint16_t length;              // 帧长度(包含帧头)
+    uint8_t  cmd;                  // 命令字
+    uint8_t  index;                  // id
+    uint16_t checksum;        // 校验和
+} __attribute__((packed)) tcp_frame_header_t;
+
+// 完整TCP协议帧 
+typedef struct {
+    tcp_frame_header_t header; // 帧头(8字节) 
+    // 柔性数组成员：数据域 (可变长度)
+    uint8_t data[];               
+} __attribute__((packed)) tcp_protocol_frame_t;
+返回报文格式相同   data[0] 放错误码
+
+// 下行命令定义  （待定）
+typedef enum {
+    /* ========== 下行命令（上位机→控制器）========== */
+    
+    /* 读取传感器数据类命令 (0x01-0x0F) */
+    CMD_READ_LIQUID_LEVEL    = 0x01,  // 读取指定通道液位值
+    CMD_READ_TEMPERATURE     = 0x02,  // 读取指定通道温度
+    CMD_READ_PRESSURE        = 0x03,  // 读取指定通道压力值
+    CMD_READ_FLOW_RATE       = 0x04,  // 读取流量值
+    
+    /* 读取状态类命令 (0x10-0x1F) */
+    CMD_GET_LIQUID_LEVEL_STATUS = 0x10,  // 获取液位检测状态
+    CMD_GET_TEMP_ALARM_STATUS   = 0x11,  // 获取温度报警状态
+    CMD_GET_PRESSURE_STATUS     = 0x12,  // 获取压力检测状态
+    CMD_GET_FLOW_STATUS         = 0x13,  // 获取流量计状态
+    CMD_GET_LED_STATUS          = 0x14,  // 获取LED状态指示
+    CMD_GET_SYSTEM_STATUS       = 0x15,  // 获取系统整体状态
+    CMD_GET_FIRMWARE_VERSION    = 0x16,  // 获取固件版本
+    
+    /* 控制输出类命令 (0x20-0x2F) */
+    CMD_SET_PUMP_CONTROL     = 0x20,  // 控制水泵开关/调速
+    CMD_SET_VALVE_CONTROL    = 0x21,  // 控制阀门开关/开度
+    CMD_SET_HEATER_CONTROL   = 0x22,  // 控制加热器开关/功率
+    CMD_SET_OUTPUT_CHANNEL   = 0x23,  // 设置指定输出通道状态
+    
+    /* 控制类命令增强 (0x30-0x3F) */
+    CMD_SET_CONTROL_MODE     = 0x30,  // 控制模式切换（手动/自动/维护模式）
+    CMD_SET_SETPOINT_VALUE   = 0x31,  // 设定值设置（温度、压力、液位、流量设定值）
+    CMD_MANUAL_OUTPUT_CONTROL = 0x32,  // 手动控制输出（9路输出的手动控制）
+    CMD_SET_WORK_MODE        = 0x33,  // 设置工作模式
+    CMD_SET_ALARM_THRESHOLDS = 0x34,  // 设置报警阈值
+    CMD_SET_CONTROL_PARAMS   = 0x35,  // 设置控制参数
+    
+    /* 配置参数类命令 (0x40-0x4F) */
+    CMD_SET_PID_PARAMS       = 0x40,  // PID参数配置（Kp、Ki、Kd参数设置）
+    CMD_SET_SAFETY_PARAMS    = 0x42,  // 安全参数配置（温度/压力/液位的高低限告警值）
+    CMD_SET_COMM_PARAMS      = 0x43,  // 通信参数配置（IP地址、端口、EtherCAT地址）
+    CMD_SET_LED_CONFIG       = 0x44,  // LED指示配置（LED功能定义和闪烁参数）
+    
+    /* 系统管理类命令 (0x50-0x5F) */
+    CMD_SYSTEM_RESET         = 0x50,  // 系统复位（软复位/硬复位/恢复出厂设置）
+    CMD_PARAM_SAVE_LOAD      = 0x51,  // 参数保存/加载（配置参数的持久化）
+    CMD_SELF_TEST            = 0x55,  // 系统自检
+    
+    /* 固件升级类命令 (0x70-0x7F) */
+    CMD_FIRMWARE_UPGRADE_START = 0x70,  // 固件升级开始
+    CMD_FIRMWARE_UPGRADE_DATA  = 0x71,  // 固件升级数据传输
+    CMD_FIRMWARE_UPGRADE_END   = 0x72,  // 固件升级结束确认
+    
+    /* ========== 上行命令（控制器→上位机）========== */
+    
+    /* 实时数据上报类 (0x90-0x9F) */
+    CMD_REALTIME_DATA_REPORT = 0x90,  // 实时数据上报
+                                      // - 3路温度值
+                                      // - 4路压力值  
+                                      // - 4路液位值（3路传感器+1路模拟量）
+                                      // - 1路流量值
+                                      // - 9路输出状态
+                                      // - 系统运行状态
+    
+    CMD_ALARM_EVENT_REPORT   = 0x91,  // 告警事件上报（实时告警信息）
+    CMD_CONTROL_LOOP_STATUS  = 0x93,  // 控制回路状态（PID控制回路的详细状态）
+    
+    /* 响应确认类命令 (0xA0-0xAF) */
+    CMD_ACK_SUCCESS          = 0xA0,  // 命令执行成功确认
+    CMD_ACK_ERROR            = 0xA1,  // 命令执行错误确认
+    CMD_ACK_BUSY             = 0xA2,  // 设备忙碌确认
+    CMD_ACK_INVALID_PARAM    = 0xA3,  // 无效参数确认
+    
+} tcp_command_t;
+// 错误码定义
+typedef enum {
+    ERR_OK = 0x00,                          // 成功
+    ERR_INVALID_CMD = 0x01,       // 无效命令
+    ERR_INVALID_PARAM = 0x02,     // 无效参数
+    ERR_DEVICE_BUSY = 0x03,       // 设备忙
+    ERR_TIMEOUT = 0x04,                // 超时
+    ERR_CHECKSUM = 0x05,          // 校验错误
+} tcp_error_code_t;
+三、中间层架构
+1、PID控制器
+
+2、数字滤波器
+
+四、HAL层
+
+
+
+
