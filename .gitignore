@@ -50,10 +50,6 @@ Release/
 settings/
 
 # Keil MDK-ARM
-*.uvprojx
-*.uvoptx
-*.uvguix
-*.uvgui
 DebugConfig/
 RTE/
 Listings/
