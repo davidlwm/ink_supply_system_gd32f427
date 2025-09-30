@@ -13,6 +13,10 @@
 #include "lcd.h"
 #include "usmart.h"
 #include "24cxx.h"
+#include "adc.h"
+#include "dac.h"
+#include "timer.h"
+#include "w25qxx.h"
 
 /**
  * @brief   系统初始化
@@ -63,7 +67,7 @@ void display_system_info(void)
  * @param   无
  * @retval  无
  */
-int main(void)
+int main01(void)
 {
     u8 key;
     u16 led_counter = 0;
@@ -127,4 +131,111 @@ int main(void)
 
         delay_ms(10);  /* 10ms延时 */
     }
+}
+
+int main02(void)
+{
+  u16 adcx;
+	float temp;
+	
+	HAL_Init();                   	//初始化HAL库    
+	GD32_Clock_Init(336,25,2,7);  	//设置时钟,168Mhz
+	delay_init(168);               	//初始化延时函数
+	uart_init(115200);             	//初始化USART
+	usmart_dev.init(84); 		        //初始化USMART
+	LED_Init();						          //初始化LED	
+	KEY_Init();						          //初始化KEY
+ 	LCD_Init();           			    //初始化LCD
+  MY_ADC_Init();                  //初始化ADC1
+    
+	POINT_COLOR=RED; 
+	LCD_ShowString(30,50,200,16,16,"GD32F427 Core Board");	
+	LCD_ShowString(30,70,200,16,16,"ADC TEST");	
+	LCD_ShowString(30,90,200,16,16,"WKS SMART");	  
+	POINT_COLOR=BLUE;//设置字体为蓝色
+	LCD_ShowString(30,130,200,16,16,"ADC1_CH5_VAL:");	      
+	LCD_ShowString(30,150,200,16,16,"ADC1_CH5_VOL:0.000V");	//先在固定位置显示小数点  	
+	
+  while(1)
+	{
+    adcx=Get_Adc_Average(ADC_CHANNEL_5,20);//获取通道5的转换值，20次取平均
+		LCD_ShowxNum(134,130,adcx,4,16,0);    //显示ADC采样后的原始值
+		temp=(float)adcx*(3.3/4096);          //获取计算后的带小数的实际电压值，比如3.1111
+		adcx=temp;                            //赋值整数部分给adcx变量，因为adcx为u16整形
+		LCD_ShowxNum(134,150,adcx,1,16,0);    //显示电压值的整数部分，3.1111的话，这里就是显示3
+		temp-=adcx;                           //把已经显示的整数部分去掉，留下小数部分，比如3.1111-3=0.1111
+		temp*=1000;                           //小数部分乘以1000，例如：0.1111就转换为111.1，相当于保留三位小数。
+		LCD_ShowxNum(150,150,temp,3,16,0X80); //显示小数部分（前面转换为了整形显示），这里显示的就是111.
+		LED0=!LED0;
+		delay_ms(250);	
+	} 
+}
+
+
+//要写入到W25QXX的字符串数组
+const u8 TEXT_Buffer[]={"GD32F427 Core Board SPI TEST"};
+#define SIZE sizeof(TEXT_Buffer)
+
+int main(void)
+{
+  u8 key;
+	u16 i=0;
+	u8 datatemp[SIZE];
+	u32 FLASH_SIZE; 
+	u16 id = 0;	
+	
+  HAL_Init();                   	//初始化HAL库    
+  GD32_Clock_Init(336,25,2,7);  	//设置时钟,168Mhz
+	delay_init(168);               	//初始化延时函数
+	uart_init(115200);             	//初始化USART
+	usmart_dev.init(84); 		        //初始化USMART
+	LED_Init();						          //初始化LED	
+	KEY_Init();						          //初始化KEY
+ 	LCD_Init();           			    //初始化LCD
+	
+  W25QXX_Init();				          //W25QXX初始化
+  POINT_COLOR=RED;
+	LCD_ShowString(30,50,200,16,16,"GD32F427 Core Board");	
+	LCD_ShowString(30,70,200,16,16,"SPI TEST");	
+	LCD_ShowString(30,90,200,16,16,"WKS SMART");	 		
+	LCD_ShowString(30,110,200,16,16,"KEY_UP:Write  KEY0:Read");	//显示提示信息		
+	while(1)								
+	{
+		id = W25QXX_ReadID();
+		if (id == W25Q128 || id == NM25Q128)
+			break;
+		LCD_ShowString(30,130,200,16,16,"W25Q128 Check Failed!"); //检测不到W25Q128
+		delay_ms(500);
+		LCD_ShowString(30,130,200,16,16,"Please Check!        ");
+		delay_ms(500);
+		LED0=!LED0;		//DS0闪烁
+	}
+	LCD_ShowString(30,130,200,16,16,"W25Q128 Ready!"); 
+	FLASH_SIZE=16*1024*1024;	//FLASH 大小为16M字节
+  POINT_COLOR=BLUE;			  //设置字体为蓝色	  
+	while(1)
+	{
+		key=KEY_Scan(0);
+		if(key==WKUP_PRES)	//KEY_UP按下,写入W25Q128
+		{
+			LCD_Fill(0,170,319,319,WHITE);//清除半屏    
+ 			LCD_ShowString(30,170,200,16,16,"Start Write W25Q128....");
+			W25QXX_Write((u8*)TEXT_Buffer,FLASH_SIZE-100,SIZE);		//从倒数第100个地址处开始,写入SIZE长度的数据
+			LCD_ShowString(30,170,200,16,16,"W25Q128 Write Finished!");	//提示传送完成
+		}
+		if(key==KEY0_PRES) //KEY0按下,读取字符串并显示
+		{
+ 			LCD_ShowString(30,170,200,16,16,"Start Read W25Q128.... ");
+			W25QXX_Read(datatemp,FLASH_SIZE-100,SIZE);					//从倒数第100个地址处开始,读出SIZE个字节
+			LCD_ShowString(30,170,200,16,16,"The Data Readed Is:   ");	//提示传送完成
+			LCD_ShowString(30,190,290,16,16,datatemp);					//显示读到的字符串
+		} 
+		i++;
+		delay_ms(10);
+		if(i==20)
+		{
+			LED0=!LED0;//提示系统正在运行	
+			i=0;
+		}		   
+	}	
 }
