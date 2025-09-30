@@ -93,6 +93,19 @@
 
 #define LWIP_DHCP                   1
 #define LWIP_DHCP_CHECK_LINK_UP     1
+#define LWIP_DHCP_DOES_ACD_CHECK    1  /* 启用DHCP地址冲突检测 */
+
+/* ========== ACD (Address Conflict Detection) 配置 ========== */
+
+#define LWIP_ACD                    1  /* 启用地址冲突检测模块 */
+#define ACD_TMR_INTERVAL            100  /* ACD定时器间隔(ms) */
+
+/* 强制启用ACD相关功能 */
+#ifdef LWIP_IPV4
+#if LWIP_IPV4
+#define LWIP_ACD_ENABLED            1
+#endif
+#endif
 
 /* ========== UDP配置 ========== */
 
@@ -213,6 +226,9 @@
 #define CHECKSUM_CHECK_TCP          0
 #define CHECKSUM_CHECK_ICMP         0
 
+/* 嵌入式系统特定配置 */
+#define LWIP_NO_UNISTD_H            1  /* 嵌入式系统没有unistd.h */
+
 /* ========== 线程配置 ========== */
 
 /* TCPIP线程优先级 */
@@ -263,8 +279,9 @@
 #define LWIP_COMPAT_MUTEX           1
 #define LWIP_COMPAT_MUTEX_ALLOWED   1
 
-/* 系统时钟 */
-#define sys_now()                   xTaskGetTickCount()
+/* 系统时钟 - 由sys_arch.c实现 */
+/* sys_now() 函数在 sys_arch.c 中实现 */
+#define LWIP_FREERTOS_SYS_NOW_FROM_FREERTOS  1
 
 /* 临界区保护 */
 #define SYS_LIGHTWEIGHT_PROT        1

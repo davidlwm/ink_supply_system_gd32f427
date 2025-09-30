@@ -18,6 +18,22 @@
 #include "timer.h"
 #include "w25qxx.h"
 
+/* FreeRTOS includes */
+#include "FreeRTOS.h"
+#include "task.h"
+
+/* lwIP includes for testing */
+#include "lwip/opt.h"
+#if LWIP_ACD
+#include "lwip/acd.h"
+#endif
+
+/* 运行时统计相关变量 */
+static uint32_t ulHighFrequencyTimerTicks = 0;
+
+/* errno变量定义 (lwIP需要) */
+int errno = 0;
+
 /**
  * @brief   系统初始化
  * @param   无
@@ -236,6 +252,74 @@ int main(void)
 		{
 			LED0=!LED0;//提示系统正在运行	
 			i=0;
-		}		   
-	}	
+		}
+	}
+}
+
+/**
+ * @brief  FreeRTOS时钟节拍钩子函数
+ * @param  无
+ * @retval 无
+ * @note   此函数在每个时钟节拍中断中被调用，用于维护HAL库的时钟
+ */
+void vApplicationTickHook(void)
+{
+    HAL_IncTick();  /* 维护HAL库的时钟计数 */
+}
+
+/**
+ * @brief  FreeRTOS堆栈溢出钩子函数
+ * @param  pxTask 溢出的任务句柄
+ * @param  pcTaskName 溢出的任务名称
+ * @retval 无
+ */
+void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
+{
+    /* 堆栈溢出处理 */
+    (void)pxTask;
+    (void)pcTaskName;
+
+    /* 在调试时可以在此处设置断点 */
+    while(1)
+    {
+        /* 死循环指示堆栈溢出 */
+    }
+}
+
+/**
+ * @brief  FreeRTOS内存分配失败钩子函数
+ * @param  无
+ * @retval 无
+ */
+void vApplicationMallocFailedHook(void)
+{
+    /* 内存分配失败处理 */
+    while(1)
+    {
+        /* 死循环指示内存分配失败 */
+    }
+}
+
+/**
+ * @brief  配置用于运行时统计的定时器
+ * @param  无
+ * @retval 无
+ * @note   简单实现，使用SysTick计数
+ */
+void vConfigureTimerForRunTimeStats(void)
+{
+    /* 重置计数器 */
+    ulHighFrequencyTimerTicks = 0;
+}
+
+/**
+ * @brief  获取运行时计数器的值
+ * @param  无
+ * @retval 计数器值
+ * @note   简单实现，使用SysTick * 10来模拟高频计数器
+ */
+uint32_t ulGetRunTimeCounterValue(void)
+{
+    /* 返回基于系统tick的高频计数 */
+    return xTaskGetTickCount() * 10;
 }

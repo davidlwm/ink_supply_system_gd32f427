@@ -37,6 +37,10 @@
 #include "main.h"
 #include "gd32f4xx_it.h"
 
+/* FreeRTOS includes */
+#include "FreeRTOS.h"
+#include "task.h"
+
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */
@@ -122,10 +126,13 @@ void UsageFault_Handler(void)
   * @brief  This function handles SVCall exception.
   * @param  None
   * @retval None
+  * @note   此函数由FreeRTOS重新定义，在port.c中实现
   */
+/*
 void SVC_Handler(void)
 {
 }
+*/
 
 /**
   * @brief  This function handles Debug Monitor exception.
@@ -140,20 +147,27 @@ void DebugMon_Handler(void)
   * @brief  This function handles PendSVC exception.
   * @param  None
   * @retval None
+  * @note   此函数由FreeRTOS重新定义，在port.c中实现
   */
+/*
 void PendSV_Handler(void)
 {
 }
+*/
 
 /**
   * @brief  This function handles SysTick Handler.
   * @param  None
   * @retval None
+  * @note   此函数由FreeRTOS重新定义，在port.c中实现
+  *         原来的HAL_IncTick()调用需要在FreeRTOS中处理
   */
+/*
 void SysTick_Handler(void)
 {
   HAL_IncTick();
 }
+*/
 
 /******************************************************************************/
 /*                 GD32F4xx Peripherals Interrupt Handlers                   */

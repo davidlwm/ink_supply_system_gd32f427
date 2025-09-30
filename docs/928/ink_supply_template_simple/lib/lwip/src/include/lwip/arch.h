@@ -196,7 +196,7 @@ typedef uintptr_t mem_ptr_t;
 #define LWIP_NO_UNISTD_H 0
 #endif
 #if !LWIP_NO_UNISTD_H
-#include <unistd.h>
+/* #include <unistd.h> - 注释掉，嵌入式系统中不存在 */
 #endif
 #else /* SSIZE_MAX */
 typedef int ssize_t;
