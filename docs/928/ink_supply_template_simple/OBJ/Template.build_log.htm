@@ -3,9 +3,9 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.35.0.0
+IDE-Version: ¶ÃVision V5.35.0.0
 Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: d d, d, LIC=----
+License Information: d d, d, LIC=BL28G-VSCX6-KUQ4L-0J8DR-FM835-A89TS
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.35.0.2
@@ -21,13 +21,397 @@ Target DLL:      CMSIS_AGDI.dll V1.33.0.0
 Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
-E:\molu\ink_supply_system_gd32f427\docs\928\ink_supply_template_simple\USER\InkSupplySystem.uvprojx
-Project File Date:  10/01/2025
+C:\Users\win11\Desktop\cla\ink_supply_system_gd32f427\docs\928\ink_supply_template_simple\USER\InkSupplySystem.uvprojx
+Project File Date:  10/09/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'IIC'
 Note: source file '..\lib\lwip\src\core\sys.c' - object file renamed from '..\OBJ\sys.o' to '..\OBJ\sys_1.o'.
+compiling usmart_config.c...
+compiling system_gd32f4xx.c...
+compiling usmart.c...
+compiling usmart_str.c...
+compiling gd32f4xx_it.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+gd32f4xx_it.c: 1 warning, 0 errors
+compiling stm32f4xx_hal_msp.c...
+compiling main.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(292): warning:  #47-D: incompatible redefinition of macro "ETH_RX_BUF_SIZE"  (declared at line 179 of "..\USER\stm32f4xx_hal_conf.h")
+  #define ETH_RX_BUF_SIZE             1536
+..\config\lwipopts.h(293): warning:  #47-D: incompatible redefinition of macro "ETH_TX_BUF_SIZE"  (declared at line 180 of "..\USER\stm32f4xx_hal_conf.h")
+  #define ETH_TX_BUF_SIZE             1536
+..\config\lwipopts.h(296): warning:  #47-D: incompatible redefinition of macro "ETH_RXBUFNB"  (declared at line 181 of "..\USER\stm32f4xx_hal_conf.h")
+  #define ETH_RXBUFNB                 4
+..\config\lwipopts.h(299): warning:  #47-D: incompatible redefinition of macro "ETH_TXBUFNB"  (declared at line 182 of "..\USER\stm32f4xx_hal_conf.h")
+  #define ETH_TXBUFNB                 4
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+main.c(325): warning:  #1-D: last line of file ends without a newline
+  }
+main.c(32): warning:  #550-D: variable "ulHighFrequencyTimerTicks"  was set but never used
+  static uint32_t ulHighFrequencyTimerTicks = 0;
+main.c: 9 warnings, 0 errors
+compiling led.c...
+compiling key.c...
+compiling myiic.c...
+compiling 24cxx.c...
+compiling adc.c...
+compiling dac.c...
+compiling lcd.c...
+compiling spi.c...
+compiling delay.c...
+compiling dma.c...
+compiling sys.c...
+compiling timer.c...
+compiling w25qxx.c...
+compiling usart.c...
+compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_pwr_ex.c...
+compiling stm32f4xx_hal_cortex.c...
+compiling stm32f4xx_hal_dac_ex.c...
+compiling stm32f4xx_hal.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_rcc_ex.c...
+compiling stm32f4xx_hal_dma.c...
+compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal_uart.c...
+compiling stm32f4xx_hal_usart.c...
+compiling stm32f4xx_hal_dma_ex.c...
+compiling stm32f4xx_hal_tim.c...
+assembling startup_gd32f407xx.s...
+compiling tasks.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\tasks.c: 1 warning, 0 errors
+compiling queue.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\queue.c: 1 warning, 0 errors
+compiling list.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\list.c: 1 warning, 0 errors
+compiling timers.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\timers.c: 1 warning, 0 errors
+compiling event_groups.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\event_groups.c: 1 warning, 0 errors
+compiling stream_buffer.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\stream_buffer.c: 1 warning, 0 errors
+compiling port.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\portable\RVDS\ARM_CM4F\port.c: 1 warning, 0 errors
+compiling heap_4.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\FreeRTOS\portable\MemMang\heap_4.c: 1 warning, 0 errors
+compiling init.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\init.c: 3 warnings, 0 errors
+compiling def.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\def.c: 3 warnings, 0 errors
+compiling stm32f4xx_hal_sram.c...
+compiling stm32f4xx_ll_fsmc.c...
+compiling dns.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\dns.c(1135): warning:  #111-D: statement is unreachable
+        break;
+..\lib\lwip\src\core\dns.c: 4 warnings, 0 errors
+compiling stm32f4xx_hal_adc.c...
+compiling stm32f4xx_hal_adc_ex.c...
+compiling stm32f4xx_hal_dac.c...
+compiling inet_chksum.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\inet_chksum.c: 3 warnings, 0 errors
+compiling ip.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ip.c: 3 warnings, 0 errors
+compiling mem.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\mem.c(628): warning:  #128-D: loop is not reachable
+      LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_LEVEL_SEVERE, ("mem_free: sanity check alignment\n"));
+..\lib\lwip\src\core\mem.c(640): warning:  #128-D: loop is not reachable
+      LWIP_DEBUGF(MEM_DEBUG | LWIP_DBG_LEVEL_SEVERE, ("mem_free: illegal memory\n"));
+..\lib\lwip\src\core\mem.c(653): warning:  #111-D: statement is unreachable
+      LWIP_MEM_FREE_UNPROTECT();
+..\lib\lwip\src\core\mem.c(662): warning:  #111-D: statement is unreachable
+      LWIP_MEM_FREE_UNPROTECT();
+..\lib\lwip\src\core\mem.c: 7 warnings, 0 errors
+compiling stats.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\stats.c: 3 warnings, 0 errors
+compiling netif.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\netif.c(302): warning:  #111-D: statement is unreachable
+      return NULL;
+..\lib\lwip\src\core\netif.c: 4 warnings, 0 errors
+compiling raw.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\raw.c(484): warning:  #111-D: statement is unreachable
+        return ERR_MEM;
+..\lib\lwip\src\core\raw.c: 4 warnings, 0 errors
+compiling memp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\memp.c: 3 warnings, 0 errors
+compiling pbuf.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\pbuf.c(296): warning:  #111-D: statement is unreachable
+        return NULL;
+..\lib\lwip\src\core\pbuf.c: 4 warnings, 0 errors
+compiling stm32f4xx_hal_spi.c...
+compiling sys.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\sys.c: 3 warnings, 0 errors
+compiling tcp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\tcp.c: 3 warnings, 0 errors
+compiling timeouts.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\timeouts.c: 3 warnings, 0 errors
+compiling autoip.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\autoip.c: 3 warnings, 0 errors
+compiling udp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\udp.c(369): warning:  #111-D: statement is unreachable
+        UDP_STATS_INC(udp.drop);
+..\lib\lwip\src\core\udp.c: 4 warnings, 0 errors
+compiling tcp_in.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\tcp_in.c: 3 warnings, 0 errors
+compiling tcp_out.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\tcp_out.c(855): warning:  #111-D: statement is unreachable
+      return ERR_VAL;
+..\lib\lwip\src\core\tcp_out.c: 4 warnings, 0 errors
+compiling dhcp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\dhcp.c: 3 warnings, 0 errors
+compiling icmp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\icmp.c(183): warning:  #111-D: statement is unreachable
+            pbuf_free(r);
+..\lib\lwip\src\core\ipv4\icmp.c(200): warning:  #111-D: statement is unreachable
+            goto icmperr;
+..\lib\lwip\src\core\ipv4\icmp.c: 5 warnings, 0 errors
+compiling etharp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\etharp.c: 3 warnings, 0 errors
+compiling igmp.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\igmp.c: 3 warnings, 0 errors
+compiling ip4_addr.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\ip4_addr.c(252): warning:  #111-D: statement is unreachable
+        break;
+..\lib\lwip\src\core\ipv4\ip4_addr.c: 4 warnings, 0 errors
+compiling ip4.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\ip4.c(111): warning:  #550-D: variable "ip4_default_multicast_netif"  was set but never used
+  static struct netif *ip4_default_multicast_netif;
+..\lib\lwip\src\core\ipv4\ip4.c: 4 warnings, 0 errors
+compiling acd.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\acd.c: 3 warnings, 0 errors
+compiling ip4_frag.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\core\ipv4\ip4_frag.c: 3 warnings, 0 errors
+compiling api_lib.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\api_lib.c: 3 warnings, 0 errors
+compiling netifapi.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\netifapi.c: 3 warnings, 0 errors
+compiling err.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\err.c: 3 warnings, 0 errors
+compiling netbuf.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\netbuf.c: 3 warnings, 0 errors
+compiling netdb.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\netdb.c: 3 warnings, 0 errors
+compiling api_msg.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\api_msg.c(748): warning:  #111-D: statement is unreachable
+        goto free_and_return;
+..\lib\lwip\src\api\api_msg.c(1922): warning:  #111-D: statement is unreachable
+          break;
+..\lib\lwip\src\api\api_msg.c: 5 warnings, 0 errors
 compiling ethernet.c...
 ..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
   #endif /* FREERTOS_CONFIG_H */
@@ -36,10 +420,46 @@ compiling ethernet.c...
 ..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
   #endif /* LWIP_ARCH_CC_H */
 ..\lib\lwip\src\netif\ethernet.c: 3 warnings, 0 errors
+compiling sys_arch.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\config\lwipopts.h(230): warning:  #47-D: incompatible redefinition of macro "LWIP_NO_UNISTD_H"  (declared at line 196 of "..\lib\lwip\src\include\lwip/arch.h")
+  #define LWIP_NO_UNISTD_H            1  /* ÂµåÂÖ•ÂºèÁ≥ªÁªüÊ≤°Êúâunistd.h */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\sys_arch.c: 4 warnings, 0 errors
+compiling tcpip.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\tcpip.c(146): warning:  #111-D: statement is unreachable
+        continue;
+..\lib\lwip\src\api\tcpip.c(213): warning:  #111-D: statement is unreachable
+        break;
+..\lib\lwip\src\api\tcpip.c: 5 warnings, 0 errors
+compiling sockets.c...
+..\config\FreeRTOSConfig.h(223): warning:  #1-D: last line of file ends without a newline
+  #endif /* FREERTOS_CONFIG_H */
+..\config\lwipopts.h(323): warning:  #1-D: last line of file ends without a newline
+  #endif /* __LWIPOPTS_H__ */
+..\lib\lwip\contrib\ports\freertos\include\arch/cc.h(165): warning:  #1-D: last line of file ends without a newline
+  #endif /* LWIP_ARCH_CC_H */
+..\lib\lwip\src\api\sockets.c(2590): warning:  #111-D: statement is unreachable
+        break;
+..\lib\lwip\src\api\sockets.c(2919): warning:  #111-D: statement is unreachable
+      return 0;
+..\lib\lwip\src\api\sockets.c(3499): warning:  #111-D: statement is unreachable
+                break;
+..\lib\lwip\src\api\sockets.c: 6 warnings, 0 errors
 linking...
 Program Size: Code=25610 RO-data=19086 RW-data=420 ZI-data=6740  
 FromELF: creating hex file...
-"..\OBJ\Template.axf" - 0 Error(s), 3 Warning(s).
+"..\OBJ\Template.axf" - 0 Error(s), 148 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -49,10 +469,10 @@ Package Vendor: GigaDevice
                 GigaDevice GD32F4xx Series Device Support and Examples
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\David\AppData\Local\Arm\Packs\GigaDevice\GD32F4xx_DFP\3.2.0\Device\F4XX\Include
+  C:\Users\win11\AppData\Local\Arm\Packs\GigaDevice\GD32F4xx_DFP\3.2.0\Device\F4XX\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:31
 </pre>
 </body>
 </html>

@@ -12,7 +12,8 @@
       "Read(//e/molu/ink_supply_system_gd32f427/**)",
       "Bash(mkdir:*)",
       "Read(//e/**)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Read(//c/Users/win11/Desktop/cla/ink_supply_system_gd32f427/docs/**)"
     ],
     "deny": [],
     "ask": []
