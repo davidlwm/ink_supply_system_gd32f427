@@ -35,7 +35,7 @@
 #define configUSE_IDLE_HOOK               0
 
 /* 使能时钟节拍钩子函数 */
-#define configUSE_TICK_HOOK               0
+#define configUSE_TICK_HOOK               1
 
 /* 使能堆栈溢出检测 (1=方法1, 2=方法2) */
 #define configCHECK_FOR_STACK_OVERFLOW    2

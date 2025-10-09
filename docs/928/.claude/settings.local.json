@@ -8,7 +8,11 @@
       "Bash(curl -L \"https://github.com/FreeRTOS/FreeRTOS-Kernel/archive/refs/tags/V10.6.2.zip\" -o freertos.zip --connect-timeout 10 --max-time 60)",
       "Bash(unzip:*)",
       "Bash(curl -L \"https://git.savannah.nongnu.org/cgit/lwip.git/snapshot/lwip-2.2.0.tar.gz\" -o lwip.tar.gz --connect-timeout 10 --max-time 60)",
-      "Bash(curl -L \"https://github.com/lwip-tcpip/lwip/archive/refs/tags/STABLE-2_2_0_RELEASE.zip\" -o lwip.zip --connect-timeout 10 --max-time 60)"
+      "Bash(curl -L \"https://github.com/lwip-tcpip/lwip/archive/refs/tags/STABLE-2_2_0_RELEASE.zip\" -o lwip.zip --connect-timeout 10 --max-time 60)",
+      "Read(//e/molu/ink_supply_system_gd32f427/**)",
+      "Bash(mkdir:*)",
+      "Read(//e/**)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,13 @@
+--cpu=Cortex-M4.fp.sp
+"..\obj\main.o"
+"..\obj\gd32f4xx_it.o"
+"..\obj\system_gd32f4xx.o"
+"..\obj\bootloader.o"
+"..\obj\boot_config.o"
+"..\obj\crc32.o"
+"..\obj\flash_hal.o"
+"..\obj\startup_gd32f407xx.o"
+--strict --scatter "..\OBJ\Bootloader.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "..\OBJ\Bootloader.map" -o ..\OBJ\Bootloader.axf
